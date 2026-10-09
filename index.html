@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GanttLite — Manajemen &amp; Penjadwalan Proyek</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <span class="logo">▦</span>
+    <div>
+      <h1>GanttLite</h1>
+      <p id="projectTitle" class="subtitle">Belum ada proyek</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button id="btnSample" class="btn btn-ghost" title="Muat contoh studi kasus">Muat contoh</button>
+    <button id="btnExport" class="btn btn-ghost">Ekspor JSON</button>
+    <label class="btn btn-ghost" for="importFile">Impor JSON
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </label>
+    <button id="btnReset" class="btn btn-danger-ghost">Reset</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- ============ Kolom kiri: panel pengaturan ============ -->
+  <aside class="sidebar">
+
+    <!-- Panel proyek -->
+    <section class="panel" id="panelProject">
+      <button class="panel-toggle" type="button" data-target="projectBody">
+        <span class="caret">▾</span> Proyek
+      </button>
+      <div class="panel-body" id="projectBody">
+        <form id="projectForm" autocomplete="off">
+          <label>Nama proyek
+            <input type="text" name="name" placeholder="cth. Pembangunan Website Toko Online">
+          </label>
+          <label>Organisasi
+            <input type="text" name="org" placeholder="cth. PT Contoh Indonesia">
+          </label>
+          <label>Website
+            <input type="url" name="website" placeholder="https://…">
+          </label>
+          <label>Deskripsi
+            <textarea name="desc" rows="3" placeholder="Ringkasan proyek…"></textarea>
+          </label>
+          <label>Tanggal mulai proyek
+            <input type="date" name="startDate">
+          </label>
+        </form>
+      </div>
+    </section>
+
+    <!-- Panel kalender kerja -->
+    <section class="panel" id="panelCalendar">
+      <button class="panel-toggle" type="button" data-target="calendarBody">
+        <span class="caret">▾</span> Kalender kerja
+      </button>
+      <div class="panel-body" id="calendarBody">
+        <h3>Hari akhir pekan</h3>
+        <p class="hint">Pilih perlakuan untuk Sabtu &amp; Minggu: <em>Tidak ada kegiatan</em> (dilewati saat hitung durasi) atau <em>Tetap jalan</em> (dihitung hari kerja).</p>
+        <div class="weekend-row">
+          <span class="day-chip" id="chip6">Sabtu</span>
+          <select id="satMode">
+            <option value="off">Tidak ada kegiatan</option>
+            <option value="work">Tetap jalan</option>
+          </select>
+        </div>
+        <div class="weekend-row">
+          <span class="day-chip" id="chip0">Minggu</span>
+          <select id="sunMode">
+            <option value="off">Tidak ada kegiatan</option>
+            <option value="work">Tetap jalan</option>
+          </select>
+        </div>
+
+        <h3>Hari libur custom</h3>
+        <p class="hint">Libur satu kali (one-off) berlaku pada tanggal tertentu; libur berulang (recurring) berlaku setiap tahun pada tanggal yang sama.</p>
+        <form id="holidayForm" class="holiday-form" autocomplete="off">
+          <input type="date" name="date" required>
+          <input type="text" name="name" placeholder="Nama hari libur" required>
+          <select name="recurrence">
+            <option value="once">Sekali (one-off)</option>
+            <option value="yearly">Berulang tiap tahun</option>
+          </select>
+          <button type="submit" class="btn btn-primary">Tambah</button>
+        </form>
+        <ul id="holidayList" class="holiday-list"></ul>
+      </div>
+    </section>
+
+    <!-- Panel editor tugas -->
+    <section class="panel" id="panelTask">
+      <button class="panel-toggle" type="button" data-target="taskBody">
+        <span class="caret">▾</span> Tugas
+      </button>
+      <div class="panel-body" id="taskBody">
+        <div class="toolbar">
+          <button id="btnAddTask" class="btn btn-primary">+ Tugas utama</button>
+          <button id="btnAddSubtask" class="btn btn-ghost" disabled>+ Subtugas</button>
+        </div>
+
+        <div id="taskEditor" class="task-editor hidden">
+          <h3 id="taskEditorTitle">Tugas baru</h3>
+          <form id="taskForm" autocomplete="off">
+            <input type="hidden" name="id">
+            <label>Nama tugas
+              <input type="text" name="name" required placeholder="cth. Desain UI/UX">
+            </label>
+            <div class="grid2">
+              <label>Kode
+                <input type="text" name="code" placeholder="cth. B" maxlength="6">
+              </label>
+              <label>Prioritas
+                <select name="priority">
+                  <option value="high">Tinggi</option>
+                  <option value="medium" selected>Sedang</option>
+                  <option value="low">Rendah</option>
+                </select>
+              </label>
+            </div>
+            <div class="grid2" id="dateDurationFields">
+              <label>Tanggal mulai (hari kerja)
+                <input type="date" name="start">
+              </label>
+              <label>Durasi (hari kerja)
+                <input type="number" name="duration" min="1" step="1" value="1">
+              </label>
+            </div>
+            <p class="hint auto-date-hint hidden">Tanggal &amp; durasi tugas induk dihitung otomatis dari subtugas.</p>
+            <div class="grid2">
+              <label>Progres (%)
+                <input type="number" name="progress" min="0" max="100" step="1" value="0">
+              </label>
+              <label>Warna bar
+                <input type="color" name="color" value="#4f8ef7">
+              </label>
+            </div>
+            <label>Resource / tim penanggung jawab
+              <input type="text" name="resource" placeholder="cth. Tim Desain">
+            </label>
+
+            <fieldset class="deps-box">
+              <legend>Dependensi (pendahulu)</legend>
+              <div id="depList"></div>
+              <div class="dep-add">
+                <select id="depPred"></select>
+                <select id="depType">
+                  <option value="FS">Finish–Start (FS)</option>
+                  <option value="SS">Start–Start (SS)</option>
+                  <option value="FF">Finish–Finish (FF)</option>
+                  <option value="SF">Start–Finish (SF)</option>
+                </select>
+                <input type="number" id="depLag" min="0" step="1" value="0" title="Delay (hari kerja)">
+                <button type="button" id="btnAddDep" class="btn btn-ghost">+</button>
+              </div>
+              <p class="hint">Delay = jeda hari kerja setelah batas hubungan terpenuhi.</p>
+            </fieldset>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Simpan</button>
+              <button type="button" id="btnCancelTask" class="btn btn-ghost">Batal</button>
+              <button type="button" id="btnDeleteTask" class="btn btn-danger">Hapus</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="taskTree" class="task-tree"></div>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ============ Kolom kanan: daftar tugas + Gantt ============ -->
+  <section class="content">
+    <div class="gantt-toolbar">
+      <div class="zoom-group">
+        <span class="hint">Zoom:</span>
+        <button class="btn btn-ghost zoom-btn" data-zoom="26" title="Harian rapat"> – </button>
+        <button class="btn btn-ghost zoom-btn active" data-zoom="34">Normal</button>
+        <button class="btn btn-ghost zoom-btn" data-zoom="48" title="Harian lebar"> + </button>
+      </div>
+      <label class="check-inline">
+        <input type="checkbox" id="chkCritical"> Tandai jalur kritis
+      </label>
+      <span id="statsLine" class="stats"></span>
+    </div>
+
+    <div class="gantt-wrap">
+      <!-- daftar tugas di kiri -->
+      <div class="gantt-left">
+        <div class="gantt-left-head">
+          <span>Tugas</span>
+          <span class="col-dur">Dur</span>
+          <span class="col-prog">%</span>
+        </div>
+        <div id="ganttRows" class="gantt-left-rows"></div>
+      </div>
+      <!-- timeline di kanan -->
+      <div class="gantt-right" id="ganttRight">
+        <div class="gantt-header" id="ganttHeader"></div>
+        <div class="gantt-scroll" id="ganttScroll">
+          <div class="gantt-body" id="ganttBody">
+            <svg class="gantt-svg" id="ganttSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="gantt-bars" id="ganttBars"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="scheduler.js"></script>
+<script src="gantt.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
