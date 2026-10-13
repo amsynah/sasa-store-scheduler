@@ -4,6 +4,14 @@ Aplikasi web **HTML/CSS/JS murni** (tanpa build step, tanpa dependensi) untuk
 manajemen & penjadwalan proyek ala GanttProject. Data disimpan di
 `localStorage` browser, dengan Ekspor/Impor JSON.
 
+## Tampilan Aplikasi
+
+![Show Image](screenshoot/ui-muat-contoh.png)
+*Tampilan aplikasi setelah tombol **Muat contoh** ditekan: seluruh tugas, subtugas, dan dependensi studi kasus Sasa Store termuat di papan Gantt.*
+
+![Show Image](screenshoot/ui-jalur-kritis.png)
+*Checkbox **Tandai jalur kritis** aktif: jalur kritis A → B → D → E → I → J ditandai dengan outline oranye pada bar dan panah dependensinya.*
+
 ## Cara menjalankan
 
 Cukup buka `index.html` di browser (Chrome/Firefox/Edge). Tidak perlu server,

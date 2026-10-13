@@ -51,6 +51,11 @@
     barsBox.innerHTML = '';
     svg.innerHTML = '';
 
+    // bersihkan lapisan .gantt-grid lama agar tidak menumpuk tiap render
+    Array.prototype.slice.call(body.querySelectorAll('.gantt-grid')).forEach(function (oldGrid) {
+      oldGrid.parentNode.removeChild(oldGrid);
+    });
+
     if (!tasks.length) {
       leftRows.appendChild(el('div', 'gantt-empty', 'Belum ada tugas. Klik "Muat contoh" atau tambah tugas.'));
       return;
@@ -145,7 +150,8 @@
         grid.appendChild(c);
       }
     }
-    body.appendChild(grid);
+    // sisipkan di awal body (sebelum svg & bars) agar selalu di bawah bar/panah
+    body.insertBefore(grid, body.firstChild);
 
     // ---------- bar + label kiri ----------
     const barPos = new Map(); // id -> {x1,x2,y}
