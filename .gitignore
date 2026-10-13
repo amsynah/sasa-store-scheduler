@@ -11,3 +11,7 @@ Thumbs.db
 
 # Log
 *.log
+
+# Riwayat chat & metadata agent (lokal saja)
+RIWAYAT_CHAT.md
+.freebuff/
